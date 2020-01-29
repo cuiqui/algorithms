@@ -6,19 +6,26 @@ MEMBERS = [
     'Longo',
     'Uje',
     'Fito',
-    'Ivan'
+    'Ivan',
+    'Pepe'
 ]
+
 
 FRIENDSHIP_REQUESTS_BY_DATE = [
     ('Rafa', 'Longo'),
     ('Uje', 'Fito'),
     ('Ivan', 'Uje'),
     ('Fito', 'Longo'),
-    ('Rafa', 'Ivan')
+    ('Rafa', 'Ivan'),
+    ('Pepe', 'Ivan')
 ]
 
-qf = WQuickUnionUF(4)
-for union in FRIENDSHIP_REQUESTS_BY_DATE:
+
+qf = WQuickUnionUF(len(MEMBERS)-1)
+date = -1
+for i, union in enumerate(FRIENDSHIP_REQUESTS_BY_DATE):
     qf.union(MEMBERS.index(union[0]), MEMBERS.index(union[1]))
-    if qf.sz
-print(qf.id)
+    if max(qf.sz) == len(MEMBERS):
+        date = i
+        break
+print(date)
