@@ -3,15 +3,18 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
 
     private boolean[][] grid;
-    private int size;
-    private int virtualTopSite;
-    private int virtualBottomSite;
     private int numberOfOpenSites;
-    private WeightedQuickUnionUF qf;
+    private final int size;
+    private final int virtualTopSite;
+    private final int virtualBottomSite;
+    private final WeightedQuickUnionUF qf;
 
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException();
+        }
         size = n;
         qf = new WeightedQuickUnionUF(size * size + 2);
         grid = new boolean[size][size];
@@ -21,6 +24,10 @@ public class Percolation {
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
+        // FIXME: still have backwash percolation bug
+        if (!withinBoundaries(row, col)) {
+            throw new IllegalArgumentException();
+        }
         // open
         if (!grid[row - 1][col - 1]) {
             grid[row - 1][col - 1] = true;
@@ -54,6 +61,9 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
+        if (!withinBoundaries(row, col)) {
+            throw new IllegalArgumentException();
+        }
         return grid[row - 1][col - 1];
     }
 
@@ -62,8 +72,8 @@ public class Percolation {
         // check if tile in (row, col) is connected to
         // top row
         int tileIdx = getTileIdx(row, col);
-        if (tileIdx < 0 || tileIdx > size * size - 1) {
-            throw new IndexOutOfBoundsException();
+        if (!withinBoundaries(row, col)) {
+            throw new IllegalArgumentException();
         }
 
         return qf.connected(tileIdx, virtualTopSite);
@@ -71,6 +81,10 @@ public class Percolation {
 
     private int getTileIdx(int row, int col) {
         return size * (row - 1) + col - 1;
+    }
+
+    private boolean withinBoundaries(int row, int col) {
+        return (0 < row && row <= size) && (0 < col && col <= size);
     }
 
     // returns the number of open sites
@@ -81,10 +95,5 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates() {
         return qf.connected(virtualBottomSite, virtualTopSite);
-    }
-
-    // test client (optional)
-    public static void main(String[] args) {
-
     }
 }
